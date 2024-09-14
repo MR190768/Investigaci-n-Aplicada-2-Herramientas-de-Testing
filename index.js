@@ -55,3 +55,25 @@ app.post("/api/logout",(req,res)=>{
 app.listen(3001,()=>{
     console.log("El servidor esta Activo en http://localhost:3001")
 });
+
+//Metodo GET Ver protegidos: lee el token de sesion recibido 
+//revisa que el token este activo
+//luego verifica el token sea veridico
+//si todo resulto le da permiso a ver contenido protegido
+app.get("/api/protected-resource",(req,res)=>{
+    try{
+        const datosReq=req.body;
+        if(tokenblacklist.includes(datosReq.Authorization)){
+        res.status(400).send({status:"FAIL",message:"token expirado"});
+        }
+        else{
+            const datosProtegido=jwt.verify(datosReq.Authorization,skey);
+            const lectura=leerData();
+            res.status(200).send(lectura);
+        }
+    }
+    catch(error){
+        res.status(400).send({status:"FAIL",message:"token no valido"});
+    }
+});
+
