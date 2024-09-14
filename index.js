@@ -21,6 +21,50 @@ const escribirData=(dato)=>{
     fs.writeFileSync("./db.Json",JSON.stringify(dato));
 };
 
+//Metodo POST Login: lee el JSON db luego lee los datos recibidos 
+//posteriormente busca si los datos existen 
+//luego que estos coicidan con el usuario
+//si todo resulto se cambia el estatus del usario y se le asigna un token de sesion
+app.post("/api/login",(req,res)=>{
+    
+    const lectura=leerData();
+    const datosReq=req.body;
+    const userN=lectura.users.find((users)=>users.username == datosReq.username);
+    const index=lectura.users.findIndex((users)=>users.username == datosReq.username);
+    if(userN.status=="ACTIVO"){
+        res.status(400).send({status:"FAIL",message:"Usuario ya esta conectado"});
+    }
+    else{
+        bcrypt.compare(datosReq.password,userN.password,(error,result)=>{
+            if(error){
+                res.status(500).send({status:"FAIL",message:"El servidor no pudo procesar su solicitud"});
+            }
+            else if(result){
+                const payload={
+                    username:datosReq.username,
+                    numSesion:contador
+                };
+                contador++;
+                const tokenA=jwt.sign(payload,skey);
+                lectura.users[index]={
+                    id: userN.id,
+                    username: userN.username,
+                    password:userN.password,
+                    email:userN.email,
+                    status:"ACTIVO"
+                }
+                escribirData(lectura);
+                res.status(200).send({status:"OK",message:"Se logueo correctamente",Authorization:tokenA});
+            }
+            else{
+                res.status(400).send({status:"FAIL",message:"Usuario o contraseña invalida"});
+            }
+    
+        });
+    }  
+    
+});
+
 //Metodo POST logout: lee el token de sesion recibido 
 //verifica el token sea veridico
 //si es asi invalida el token agregandolo a una blacklist
