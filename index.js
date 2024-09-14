@@ -21,6 +21,35 @@ const escribirData=(dato)=>{
     fs.writeFileSync("./db.Json",JSON.stringify(dato));
 };
 
+//Metodo POST logout: lee el token de sesion recibido 
+//verifica el token sea veridico
+//si es asi invalida el token agregandolo a una blacklist
+//si todo resulto se cambia el estatus del usario a INACTIVO 
+app.post("/api/logout",(req,res)=>{
+    try{
+    const datosReq=req.body;
+    const datosProtegido=jwt.verify(datosReq.Authorization,skey);
+    tokenblacklist.push(datosReq.Authorization);
+
+    const lectura=leerData();
+    const userN=lectura.users.find((users)=>users.username == datosProtegido.username);
+    const index=lectura.users.findIndex((users)=>users.username == datosProtegido.username);
+    lectura.users[index]={
+        id: userN.id,
+        username: userN.username,
+        password:userN.password,
+        email:userN.email,
+        status:"INACTIVO"
+    }
+    escribirData(lectura);
+
+    res.status(200).send({status:"OK",message:"Deslogueado correctamente"});
+    
+    }
+    catch(error){
+        res.status(400).send({status:"FAIL",message:"token no valido"});
+    }
+});
 
 
 app.listen(3001,()=>{
