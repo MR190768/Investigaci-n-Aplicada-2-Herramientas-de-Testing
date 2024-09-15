@@ -1,3 +1,13 @@
+//Caso de prueba 1
+POST http://localhost:3001/api/register HTTP/1.1
+Content-Type: application/json
+
+{
+            "username": "Gerson",
+            "password": "queso",
+            "email":"gerson@gmail.com"
+}
+
 //Caso de prueba 2
 POST http://localhost:3001/api/login HTTP/1.1
 Content-Type: application/json
