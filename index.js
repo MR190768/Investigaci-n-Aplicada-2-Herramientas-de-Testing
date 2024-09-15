@@ -21,6 +21,37 @@ const escribirData=(dato)=>{
     fs.writeFileSync("./db.Json",JSON.stringify(dato));
 };
 
+
+//Metodo POST registrar: primeor lee el JSoN db luego lee el nuevo Usuario, encripta la contraseña
+//agrega el nuevo usario y actualiza el JSON db
+app.post("/api/register",(req,res)=>{
+    
+    const UsersDB=leerData();
+    const datosReq=req.body;
+    if(UsersDB.users.find((users)=>users.username == datosReq.username)){
+        res.status(400).send({status:"FAIL",message:"Usuario ya existe"});
+    }
+    else{
+    bcrypt.hash(datosReq.password,2,(error,hash)=>{
+        if(error){
+            res.status(500).send({status:"FAIL",message:"El servidor no pudo procesar su solicitud"});
+        }
+        else{
+            const newUsuario={
+                id: UsersDB.users.length + 1,
+                username: datosReq.username,
+                password:hash,
+                email:datosReq.email,
+                status:"INACTIVO"
+            };
+            UsersDB.users.push(newUsuario);
+            escribirData(UsersDB);
+            res.status(201).send({status:"OK",message:"Usuario registrado con exito"});
+        }
+    })
+    }
+});
+
 //Metodo POST Login: lee el JSON db luego lee los datos recibidos 
 //posteriormente busca si los datos existen 
 //luego que estos coicidan con el usuario
