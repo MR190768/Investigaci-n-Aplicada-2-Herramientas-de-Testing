@@ -31,6 +31,124 @@ Content-Type: application/json
 POST http://localhost:3001/api/logout HTTP/1.1
 Content-Type: application/json
 
+
+//ver productos por medio del filtro
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .filter-bar button, .filter-bar input {
+      padding: 10px;
+      font-size: 16px;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .product {
+      border: 1px solid #ccc;
+      padding: 15px;
+      text-align: center;
+    }
+    .product img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: contain;
+    }
+    .product-info {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Catálogo de Productos</h1>
+
+  <div class="filter-bar">
+    <button onclick="filterProducts()">Filtrar</button>
+    <label for="priceRange">Rango de Precio:</label>
+    <input type="number" id="priceRange" placeholder="Ingrese el rango máximo">
+  </div>
+
+  <div class="products" id="productsList">
+    <!-- Productos van aquí -->
+  </div>
+
+  <script>
+    const products = [
+      { categoria: "Electrónica", nombre: "Televisor", precio: 500, imagen: "https://images.samsung.com/is/image/samsung/mx_UN55JS7200FXZX_001_Front_titanum-silver?$L2-Thumbnail$" },
+      { categoria: "Electrónica", nombre: "Teléfono", precio: 300, imagen: "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/6487/6487247_sd.jpg" },
+      { categoria: "Electrónica", nombre: "cocina Electrica", precio: 350, imagen: "https://nyc3.digitaloceanspaces.com/mc-ambitec/2019/04/NE59M4310SSAA.jpg" },
+      { categoria: "Ropa", nombre: "Camisa", precio: 10, imagen: "https://th.bing.com/th/id/OIP.tjimzOWtf5gM5-vjJ2dFSQHaHa?rs=1&pid=ImgDetMain" },
+      { categoria: "Ropa", nombre: "Pantalón", precio: 20, imagen: "https://th.bing.com/th/id/R.8ffe18e2b8150d150154b396c004fde5?rik=K9jHPftVKkdH%2bw&pid=ImgRaw&r=0" },
+      { categoria: "Deportes", nombre: "Bicicleta", precio: 250, imagen: "https://res.cloudinary.com/walmart-labs/image/upload/w_960,dpr_auto,f_auto,q_auto:best/mg/gm/3pp/asr/8e4b758d-3d18-4ad1-8e2d-24c84923d4ea.720b5c73796659c0077006709eca70b7.jpeg?odnHeight=2000&odnWidth=2000&odnBg=ffffff" },
+      { categoria: "Deportes", nombre: "Pelota", precio: 20, imagen: "https://th.bing.com/th/id/R.3d0fac614ccba4c1e42523c1d5ae4db7?rik=wNT%2fD4hwKVk0zw&pid=ImgRaw&r=0" },
+      { categoria: "Juguetes", nombre: "Muñeca", precio: 30, imagen: "https://th.bing.com/th/id/OIP._jhLPiyd4z_WOVrI5V6XUgHaFe?rs=1&pid=ImgDetMain" },
+      { categoria: "Juguetes", nombre: "Auto de juguete", precio: 15, imagen: "https://sgfm.elcorteingles.es/SGFM/dctm/MEDIA03/202007/09/00102716185869____4__1200x1200.jpg" },
+      { categoria: "Belleza", nombre: "Maquillaje", precio: 15, imagen: "https://th.bing.com/th/id/OIP.9AExUVNayXuva-eNwabJzAHaE8?rs=1&pid=ImgDetMain" },
+      
+    ];
+
+    function displayProducts(productList) {
+      const productContainer = document.getElementById('productsList');
+      productContainer.innerHTML = '';
+
+      productList.forEach(product => {
+        const productElement = `
+          <div class="product">
+            <img src="${product.imagen}" alt="${product.nombre}">
+            <div class="product-info">
+              <h3>${product.nombre}</h3>
+              <p>Precio: $${product.precio}</p>
+              <p>Categoría: ${product.categoria}</p>
+            </div>
+          </div>
+        `;
+        productContainer.innerHTML += productElement;
+      });
+    }
+
+    function filterProducts() {
+      const priceRange = document.getElementById('priceRange').value;
+      const filteredProducts = products.filter(product => product.precio <= priceRange || !priceRange);
+      displayProducts(filteredProducts);
+    }
+
+    // Muestra todos los productos al cargar la página
+    displayProducts(products);
+  </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
 {
     "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkdlcnNvbiIsImlhdCI6MTcyNjE1MzU2MH0.nVDQAS5lcfoVQXRaBuMQAw6nKX1E1YWTfcU27zCW41s"
 }
